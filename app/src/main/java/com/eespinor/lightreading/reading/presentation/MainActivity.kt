@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
                     floatingActionButton = {
                         FloatingActionButton(
                             onClick = {
-                                navController.navigate(ReadingAddScreenRoute)
+                                navController.navigate(Screen.ReadingAddScreen.route)
                             },
                         ) {
                             Icon(Icons.Default.Add, contentDescription = "Add")
@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         NavHost(
                             navController = navController,
-                            startDestination = ReadingListScreenRoute,
+                            startDestination = Screen.ReadingListScreen.route,
                         ) {
                             composable(
                                 route = Screen.ReadingListScreen.route
@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
                                 ReadingAddScreen(navController)
                             }
                             composable(
-                                route = Screen.ReadingAddScreen.route
+                             route = Screen.ReadingAddScreen.route
                             ) {
                                 ReadingAddScreen(navController)
                             }
