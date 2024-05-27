@@ -6,11 +6,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.eespinor.lightreading.R
 import com.eespinor.lightreading.common.Constants
 import com.eespinor.lightreading.common.Resource
+import com.eespinor.lightreading.common.UiEvent
+import com.eespinor.lightreading.common.UiText
+import com.eespinor.lightreading.common.ValidationResult
+import com.eespinor.lightreading.reading.domain.reading.model.ReadingType
 import com.eespinor.lightreading.reading.domain.reading.usecase.AddReading
 import com.eespinor.lightreading.reading.domain.reading.usecase.GetReading
-import com.eespinor.lightreading.reading.domain.reading.usecase.UpdateReading
 import com.eespinor.lightreading.reading.domain.reading.usecase.ValidateMeasure
 import com.eespinor.lightreading.reading.domain.reading.usecase.ValidateMonth
 import com.eespinor.lightreading.reading.domain.reading.usecase.ValidateRoom
@@ -18,6 +22,11 @@ import com.eespinor.lightreading.reading.domain.reading.usecase.ValidateYear
 import com.eespinor.lightreading.reading.domain.room.usecase.GetRooms
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,11 +39,18 @@ class ReadingAddViewModel @Inject constructor(
     private val validateMeasureUseCase: ValidateMeasure,
     private val validateRoomUseCase: ValidateRoom,
     private val validateYearUseCase: ValidateYear,
-    private val validateMonthUseCase: ValidateMonth
+    private val validateMonthUseCase: ValidateMonth,
 ) : ViewModel() {
 
     var state by mutableStateOf(ReadingAddState())
         private set
+
+    private val _uiEvent = Channel<UiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
+//    private val _eventFlow = MutableSharedFlow<UiEvent>()
+//    val eventFlow = _eventFlow.asSharedFlow()
+
 
     private var searchRoomJob: Job? = null
 
@@ -42,13 +58,21 @@ class ReadingAddViewModel @Inject constructor(
 
     private var getReadingJob: Job? = null
 
-
     init {
         getRooms()
 
         savedStateHandle.get<String>(Constants.PARAM_READING_ID)?.let { id ->
             getReading(id)
         }
+
+        savedStateHandle.get<Int>(Constants.PARAM_MONTH)?.let { month ->
+            state = state.copy(month = month)
+        }
+
+        savedStateHandle.get<Int>(Constants.PARAM_YEAR)?.let { year ->
+            state = state.copy(year = year)
+        }
+
     }
 
     fun onEvent(event: ReadingAddEvent) {
@@ -78,40 +102,47 @@ class ReadingAddViewModel @Inject constructor(
 
 
     private fun saveReading() {
+
         val measureResult = validateMeasureUseCase(state.measure)
         val roomResult = validateRoomUseCase(state.roomId)
         val yearResult = validateYearUseCase(state.year)
         val monthResult = validateMonthUseCase(state.month)
-        val hasError = listOf(measureResult, roomResult, yearResult, monthResult).any { !it.successful }
+        val hasError =
+            listOf(measureResult, roomResult, yearResult, monthResult).any { !it.successful }
 
         if (hasError) {
             state = state.copy(
-                measureError = measureResult.successful,
-                roomError = roomResult.successful,
-                yearError = yearResult.successful,
-                monthError = monthResult.successful
+                measureError = getMessage(measureResult),
+                roomError =    getMessage(roomResult),
+                yearError =    getMessage(yearResult),
+                monthError =   getMessage(monthResult)
             )
             return
         }
+
+        state = state.copy(measureError = null, roomError = null, yearError = null, monthError = null)
+
+
         saveReadingJob?.cancel()
         saveReadingJob = viewModelScope.launch {
             addReadingUseCase(
-                state.measure,
-                state.year,
-                state.month,
-                state.roomId
+                state.measure.toDouble(), state.year, state.month, state.roomId
             ).collect { result ->
-                state = when (result) {
+                 when (result) {
                     is Resource.Success -> {
-                        state.copy(isSuccessfullyRegistered = true)
+                        _uiEvent.send(UiEvent.Success)
                     }
 
                     is Resource.Error -> {
-                        state.copy(isErrorRegister = true)
+                        _uiEvent.send(
+                            UiEvent.ShowSnackbar(
+                                UiText.DynamicString(result.message?: "" )
+                            )
+                        )
                     }
 
                     is Resource.Loading -> {
-                        state.copy(isLoading = result.isLoading)
+                        state = state.copy(isLoading = result.isLoading)
                     }
                 }
             }
@@ -129,7 +160,7 @@ class ReadingAddViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        state.copy(isErrorGetRooms =true)
+                        state.copy(isErrorGetRooms = true)
                     }
 
                     is Resource.Loading -> {
@@ -148,7 +179,7 @@ class ReadingAddViewModel @Inject constructor(
                     is Resource.Success -> {
                         result.data?.let { reading ->
                             state = state.copy(
-                                measure = reading.measure,
+                                measure = reading.measure.toString(),
                                 year = reading.year,
                                 month = reading.month,
                                 roomId = reading.room.id
@@ -167,4 +198,37 @@ class ReadingAddViewModel @Inject constructor(
             }
         }
     }
+}
+
+private fun getMessage(validationResult: ValidationResult<ReadingType>): Int? {
+    if (validationResult.successful) {
+        return null
+    }
+
+    return when (validationResult.type) {
+        ReadingType.MeasureEmpty -> {
+            R.string.measure_empty
+        }
+
+        ReadingType.MeasureIsNotNumber -> {
+            R.string.measure_must_be_number
+        }
+
+        ReadingType.RoomEmpty -> {
+            R.string.room_empty
+        }
+
+        ReadingType.MonthInvalid -> {
+            R.string.month_invalid
+        }
+
+        ReadingType.YearInvalid -> {
+            R.string.year_invalid
+        }
+
+        null -> {
+            null
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.eespinor.lightreading.reading.presentation.list.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -20,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eespinor.lightreading.reading.presentation.list.ReadingListState
 import java.time.LocalDate
@@ -29,14 +32,19 @@ import java.util.Locale
 
 @Composable
 fun MonthYearPicker(
+    modifier: Modifier = Modifier,
     month: Int,
     year: Int,
     onMonthChange: (Int) -> Unit,
-    onYearChange: (Int) -> Unit
-) {
+    onYearChange: (Int) -> Unit,
+    isErrorMonth: Boolean = false,
+    @StringRes errorMonthMessage: Int? = null,
+    isErrorYear: Boolean = false,
+    @StringRes errorYearMessage: Int? = null,
+
+    ) {
     Row(
-        modifier = Modifier
-            .padding(16.dp)
+        modifier = modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -44,19 +52,45 @@ fun MonthYearPicker(
         Column(
             modifier = Modifier.weight(3f),
         ) {
-            MonthPicker(month, onMonthChange)
+            MonthPicker(
+                month = month,
+                onMonthChange = onMonthChange,
+                isErrorMonth = isErrorMonth
+            )
+
+            Text(
+                text = errorMonthMessage?.let { stringResource(id = it) } ?: "",
+                color =  MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp, start = 16.dp)
+            )
+
         }
         Column(
             modifier = Modifier.weight(2f),
         ) {
-            YearPicker(year, onYearChange)
+            YearPicker(
+                year = year,
+                onYearChange = onYearChange,
+                isErrorYear = isErrorYear,
+            )
+            Text(
+                text = errorYearMessage?.let { stringResource(id = it) } ?: "",
+                color =  MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp, start = 16.dp)
+            )
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MonthPicker(month: Int, onMonthChange: (Int) -> Unit) {
+fun MonthPicker(
+    month: Int,
+    isErrorMonth: Boolean = false,
+    onMonthChange: (Int) -> Unit,
+) {
 
 
     val spanishMonths =
@@ -69,7 +103,10 @@ fun MonthPicker(month: Int, onMonthChange: (Int) -> Unit) {
         expanded = expanded,
         onExpandedChange = { expanded = it },
     ) {
-        TextField(
+
+
+
+        OutlinedTextField(
             // The `menuAnchor` modifier must be passed to the text field to handle
             // expanding/collapsing the menu on click. A read-only text field has
             // the anchor type `PrimaryNotEditable`.
@@ -78,9 +115,10 @@ fun MonthPicker(month: Int, onMonthChange: (Int) -> Unit) {
             onValueChange = {},
             readOnly = true,
             singleLine = true,
+            isError = isErrorMonth,
             //label = { Text("Label") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            //colors = ExposedDropdownMenuDefaults.textFieldColors(),
         )
         ExposedDropdownMenu(
             expanded = expanded,
@@ -103,9 +141,14 @@ fun MonthPicker(month: Int, onMonthChange: (Int) -> Unit) {
 }
 
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun YearPicker(year: Int, onYearChange: (Int) -> Unit) {
+fun YearPicker(
+    year: Int,
+    isErrorYear: Boolean = false,
+    onYearChange: (Int) -> Unit,
+) {
 
     val options = listOf(LocalDate.now().year, LocalDate.now().year - 1, LocalDate.now().year - 2)
     var expanded by remember { mutableStateOf(false) }
@@ -116,7 +159,7 @@ fun YearPicker(year: Int, onYearChange: (Int) -> Unit) {
         expanded = expanded,
         onExpandedChange = { expanded = it },
     ) {
-        TextField(
+        OutlinedTextField(
             // The `menuAnchor` modifier must be passed to the text field to handle
             // expanding/collapsing the menu on click. A read-only text field has
             // the anchor type `PrimaryNotEditable`.
@@ -125,9 +168,11 @@ fun YearPicker(year: Int, onYearChange: (Int) -> Unit) {
             onValueChange = {},
             readOnly = true,
             singleLine = true,
+            isError = isErrorYear,
+
             //label = { Text("Label") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            //  colors = ExposedDropdownMenuDefaults.textFieldColors(),
         )
         ExposedDropdownMenu(
             expanded = expanded,

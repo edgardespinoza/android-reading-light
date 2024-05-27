@@ -4,10 +4,11 @@ import androidx.compose.runtime.Immutable
 import com.eespinor.lightreading.reading.domain.room.model.Room
 
 @Immutable
-data class Reading (
-    val id: String="",
+data class Reading(
+    val id: String = "",
     val measure: Double,
     val year: Int,
     val month: Int,
-    val room: Room
+    val room: Room,
+    val measurePrevious: Double? = 0.0,
 )

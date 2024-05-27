@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Light Reading</string>
+    <string name="measure">Measure</string>
+    <string name="month">Month</string>
+    <string name="year">Year</string>
+    <string name="room">Room</string>
+    <string name="save">Save</string>
+    <string name="measure_must_be_number">Measure must be a number</string>
+    <string name="measure_empty">Measure is empty</string>
+    <string name="room_empty">Room is empty</string>
+    <string name="month_invalid">Month invalid</string>
+    <string name="year_invalid">Year invalid</string>
+    <string name="before">Before</string>
+    <string name="today">Today</string>
+    <string name="difference">Difference</string>
 </resources>

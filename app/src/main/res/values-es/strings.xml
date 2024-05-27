@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Light Reading</string>
+    <string name="measure">Medida</string>
+    <string name="month">Mes</string>
+    <string name="year">Año</string>
+    <string name="room">Cuarto</string>
+    <string name="save">Registrar</string>
+    <string name="measure_must_be_number">Lectura debe ser un número</string>
+    <string name="measure_empty">Lectura vacía</string>
+    <string name="room_empty">Cuarto vacío</string>
+    <string name="month_invalid">Mes inválido</string>
+    <string name="year_invalid">Año inválido</string>
+    <string name="before">Anterior</string>
+    <string name="today">Hoy</string>
+    <string name="difference">Diferencia</string>
+
+</resources>

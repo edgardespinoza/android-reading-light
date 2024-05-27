@@ -6,13 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eespinor.lightreading.common.Resource
-import com.eespinor.lightreading.reading.domain.reading.usecase.AddReading
 import com.eespinor.lightreading.reading.domain.reading.usecase.GetReadings
-import com.eespinor.lightreading.reading.domain.room.usecase.GetRooms
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,10 +22,6 @@ class ReadingListViewModel @Inject constructor(
 
     private var searchReadingJob: Job? = null
 
-    init {
-        getReadings()
-    }
-
     fun onEvent(event: ReadingListEvent) {
         when (event) {
             is ReadingListEvent.OnYearChanged -> {
@@ -40,30 +33,45 @@ class ReadingListViewModel @Inject constructor(
                 state = state.copy(month = event.month)
                 getReadings()
             }
+
+            is ReadingListEvent.OnRefreshing -> {
+                getRefreshing()
+            }
+            is ReadingListEvent.OnGetReadings -> {
+                getReadings()
+            }
         }
 
     }
 
 
-    private fun getReadings(month: Int = state.month, year: Int = state.year) {
+    private fun getReadings(month: Int = state.month, year: Int = state.year, changeLoading: (Boolean)->Unit={
+        state = state.copy(isLoading = it)
+    }) {
         searchReadingJob?.cancel()
         searchReadingJob = viewModelScope.launch {
             getReadingUseCase(month, year).collect { result ->
-                state = when (result) {
+                 when (result) {
                     is Resource.Success -> {
-                        state.copy(readings = result.data ?: emptyList())
+                       state = state.copy(readings = result.data ?: emptyList())
                     }
 
                     is Resource.Error -> {
-                        state.copy(error = result.message ?: "An unexpected error occurred")
+                        state = state.copy(error = result.message ?: "An unexpected error occurred")
                     }
 
                     is Resource.Loading -> {
-                        state.copy(isLoading = result.isLoading)
+                        changeLoading(result.isLoading)
                     }
                 }
             }
         }
     }
 
+
+    private fun getRefreshing() {
+        getReadings{changeStatus ->
+            state = state.copy(isRefreshing = changeStatus)
+        }
+    }
 }

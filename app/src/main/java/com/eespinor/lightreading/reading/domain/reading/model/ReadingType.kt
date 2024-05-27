@@ -2,8 +2,8 @@ package com.eespinor.lightreading.reading.domain.reading.model
 
 enum class ReadingType {
     MeasureEmpty,
+    MeasureIsNotNumber,
     RoomEmpty,
-    Valid,
     MonthInvalid,
     YearInvalid
 }

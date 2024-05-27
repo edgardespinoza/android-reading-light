@@ -27,7 +27,7 @@ class AddReading @Inject constructor(
                 room = Room(
                     id = roomId,
                     name = ""
-                )
+                ),
             )
         )
 

@@ -7,9 +7,22 @@ import javax.inject.Inject
 
 class ValidateMeasure @Inject constructor() {
 
-    operator fun invoke(measure: Double): ValidationResult<ReadingType> {
+    operator fun invoke(measure: String): ValidationResult<ReadingType> {
+        if (measure.isEmpty()) {
+            return ValidationResult(
+                successful = false,
+                ReadingType.MeasureEmpty
+            )
+        }
 
-        if (measure <= 0) {
+        if (measure.toDoubleOrNull() == null) {
+            return ValidationResult(
+                successful = false,
+                ReadingType.MeasureIsNotNumber
+            )
+        }
+
+        if ((measure.toDoubleOrNull() ?: 0.0) <= 0) {
             return ValidationResult(
                 successful = false,
                 ReadingType.MeasureEmpty

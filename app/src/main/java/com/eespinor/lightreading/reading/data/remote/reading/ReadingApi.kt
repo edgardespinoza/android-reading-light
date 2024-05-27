@@ -12,7 +12,7 @@ import retrofit2.http.Query
 
 interface ReadingApi {
 
-    @GET("api/reading")
+    @GET("api/readings")
     suspend fun getListReading(
         @Query("month") month: Int,
         @Query("year") year: Int

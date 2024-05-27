@@ -6,6 +6,7 @@ import java.time.LocalDate
 
 data class ReadingListState (
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val readings: List<Reading> = emptyList(),
     val year: Int = LocalDate.now().year,
     val month: Int = LocalDate.now().monthValue,

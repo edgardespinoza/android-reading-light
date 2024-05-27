@@ -8,25 +8,6 @@ sealed class Screen(val route: String) {
     object ReadingAddScreen : Screen("reading_add_screen")
 }
 
-sealed class ScreenNew{
-    @Serializable
-    object ReadingListScreenRoute
-    @Serializable
-    data class ReadingAddScreenRoute(
-        val id: String,
-        val measure: Double,
-        val year: Int,
-        val month: Int,
-        val room: Room
-    ) {
-        @Serializable
-        data class Room(
-            val id: String,
-            val name: String
-
-        )
-    }
-}
 
 
 
