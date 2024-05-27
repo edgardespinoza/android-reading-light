@@ -6,11 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -25,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.eespinor.lightreading.reading.presentation.add.ReadingAddScreen
 import com.eespinor.lightreading.reading.presentation.list.ReadingListScreen
 import com.eespinor.lightreading.reading.presentation.ui.theme.LightReadingTheme
@@ -69,13 +66,15 @@ class MainActivity : ComponentActivity() {
                                 navController = navController
                             )
                         }
-                        composable(
-                            route = Screen.ReadingAddScreen.route + "/{id}"
-                        ) {
+                        composable<ReadingEditScreen> { backStackEntry ->
+                            //route = Screen.ReadingAddScreen.route + "/{id}"
+                            val item = backStackEntry.toRoute<ReadingEditScreen>()
+
                             ReadingAddScreen(
                                 modifier = Modifier.padding(innerPadding),
                                 snackbarHostState = snackbarHostState,
-                                navController = navController
+                                navController = navController,
+                                item = item
                             )
                         }
                         composable(

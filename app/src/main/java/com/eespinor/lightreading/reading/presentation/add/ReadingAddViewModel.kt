@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.toRoute
 import com.eespinor.lightreading.R
 import com.eespinor.lightreading.common.Constants
 import com.eespinor.lightreading.common.Resource
@@ -20,6 +22,7 @@ import com.eespinor.lightreading.reading.domain.reading.usecase.ValidateMonth
 import com.eespinor.lightreading.reading.domain.reading.usecase.ValidateRoom
 import com.eespinor.lightreading.reading.domain.reading.usecase.ValidateYear
 import com.eespinor.lightreading.reading.domain.room.usecase.GetRooms
+import com.eespinor.lightreading.reading.presentation.ReadingEditScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -60,10 +63,6 @@ class ReadingAddViewModel @Inject constructor(
 
     init {
         getRooms()
-
-        savedStateHandle.get<String>(Constants.PARAM_READING_ID)?.let { id ->
-            getReading(id)
-        }
 
         savedStateHandle.get<Int>(Constants.PARAM_MONTH)?.let { month ->
             state = state.copy(month = month)
@@ -154,17 +153,18 @@ class ReadingAddViewModel @Inject constructor(
         searchRoomJob?.cancel()
         searchRoomJob = viewModelScope.launch {
             getRoomUseCase().collect { result ->
-                state = when (result) {
+                 when (result) {
                     is Resource.Success -> {
-                        state.copy(rooms = result.data ?: emptyList())
+                        state= state.copy(rooms = result.data ?: emptyList())
+                        _uiEvent.send(UiEvent.RoomCompleted)
                     }
 
                     is Resource.Error -> {
-                        state.copy(isErrorGetRooms = true)
+                        state= state.copy(isErrorGetRooms = true)
                     }
 
                     is Resource.Loading -> {
-                        state.copy(isLoading = result.isLoading)
+                        state=  state.copy(isLoading = result.isLoading)
                     }
                 }
             }

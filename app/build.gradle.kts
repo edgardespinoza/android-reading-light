@@ -89,5 +89,6 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.navigation.compose)
 
 }

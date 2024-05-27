@@ -14,7 +14,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.eespinor.lightreading.R
 import com.eespinor.lightreading.common.UiEvent
+import com.eespinor.lightreading.reading.presentation.ReadingEditScreen
 import com.eespinor.lightreading.reading.presentation.add.components.RoomPicker
 import com.eespinor.lightreading.reading.presentation.add.components.TextEntry
 import com.eespinor.lightreading.reading.presentation.list.components.MonthYearPicker
@@ -42,11 +42,13 @@ fun ReadingAddScreen(
     snackbarHostState: SnackbarHostState,
     navController: NavController,
     viewModel: ReadingAddViewModel = hiltViewModel(),
+    item: ReadingEditScreen? = null,
 ) {
 
     val state = viewModel.state
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
@@ -61,7 +63,16 @@ fun ReadingAddScreen(
                     )
                 }
 
-                else -> Unit
+                is UiEvent.RoomCompleted -> {
+                    item?.let {
+                        viewModel.onEvent(ReadingAddEvent.OnYearChanged(it.year))
+                        viewModel.onEvent(ReadingAddEvent.OnMonthChanged(it.month))
+                        viewModel.onEvent(ReadingAddEvent.OnMeasureChanged(it.measure))
+                        viewModel.onEvent(ReadingAddEvent.OnRoomChanged(it.roomId))
+
+                    }
+                }
+
             }
         }
     }
@@ -107,7 +118,7 @@ fun ReadingAddScreen(
                 rooms = state.rooms,
                 isError = state.roomError != null,
                 errorMessage = state.roomError,
-                idRoomSelected = state.roomId
+                idRoom = state.roomId
             ) {
                 viewModel.onEvent(ReadingAddEvent.OnRoomChanged(it))
                 focusManager.moveFocus(FocusDirection.Down)

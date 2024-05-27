@@ -2,6 +2,6 @@ package com.eespinor.lightreading.common
 
 sealed class UiEvent {
     object Success: UiEvent()
-    object NavigateUp: UiEvent()
+    object RoomCompleted: UiEvent()
     data class ShowSnackbar(val message: UiText): UiEvent()
 }

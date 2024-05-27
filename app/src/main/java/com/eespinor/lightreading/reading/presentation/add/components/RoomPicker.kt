@@ -16,9 +16,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -35,15 +38,18 @@ fun RoomPicker(
     modifier: Modifier = Modifier,
     label: String,
     rooms: List<Room>,
-    idRoomSelected: String,
+    idRoom: String,
     isError: Boolean = false,
     @StringRes errorMessage: Int? = null,
     onRoomChange: (String) -> Unit,
 ) {
 
+
     var expanded by remember { mutableStateOf(false) }
 
-    var roomSelected by remember { mutableStateOf(idRoomSelected) }
+    var roomSelected by remember { mutableStateOf(idRoom) }
+
+    roomSelected = idRoom
 
     Column(
         modifier = modifier
@@ -96,5 +102,6 @@ fun RoomPicker(
 
 
 private fun getNameRoom(id: String, rooms: List<Room>): String {
+    if (id.isEmpty()) return ""
     return rooms.find { it.id == id }?.name ?: ""
 }

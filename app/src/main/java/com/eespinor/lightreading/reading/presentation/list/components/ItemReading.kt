@@ -34,7 +34,8 @@ fun ItemReading(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable { onItemClick(reading) },
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(
@@ -45,8 +46,7 @@ fun ItemReading(
             Row(
                 modifier = Modifier
                     .padding(horizontal = 2.dp)
-                    .fillMaxWidth()
-                    .clickable { onItemClick(reading) },
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = CenterVertically,
 
@@ -73,9 +73,10 @@ fun ItemReading(
                 Text(
                     text = "${stringResource(id = R.string.before)}: ${reading.measurePrevious}",
                     fontStyle = FontStyle.Italic,
-                    style = MaterialTheme.typography.titleSmall)
+                    style = MaterialTheme.typography.titleSmall
+                )
                 Text(
-                    text = "${stringResource(id = R.string.difference)}: ${reading.measure - (reading?.measurePrevious?:0.0)} ",
+                    text = "${stringResource(id = R.string.difference)}: ${reading.measure - (reading?.measurePrevious ?: 0.0)} ",
                     fontStyle = FontStyle.Italic,
                     style = MaterialTheme.typography.titleSmall,
                     textAlign = TextAlign.End,

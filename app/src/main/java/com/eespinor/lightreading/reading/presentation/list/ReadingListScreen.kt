@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.eespinor.lightreading.reading.presentation.ReadingEditScreen
 import com.eespinor.lightreading.reading.presentation.Screen
 import com.eespinor.lightreading.reading.presentation.list.components.FloatingActionButton
 import com.eespinor.lightreading.reading.presentation.list.components.ItemsReading
@@ -66,8 +67,16 @@ fun ReadingListScreen(
                 error = state.error,
                 isLoading = state.isLoading,
                 isRefreshing = state.isRefreshing,
-                onItemClick = {
-                    navController.navigate(Screen.ReadingAddScreen.route + "/${it.id}")
+                onItemClick = { reading ->
+                    navController.navigate(
+                        ReadingEditScreen(
+                            id = reading.id,
+                            month = state.month,
+                            year = state.year,
+                            measure = reading.measure.toString(),
+                            roomId = reading.room.id,
+                        )
+                    )
                 },
                 onRefresh = {
                     viewModel.onEvent(ReadingListEvent.OnRefreshing)
