@@ -6,19 +6,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.eespinor.lightreading.R
+import com.eespinor.lightreading.common.BarState
 import com.eespinor.lightreading.reading.presentation.ReadingEditScreen
 import com.eespinor.lightreading.reading.presentation.Screen
 import com.eespinor.lightreading.reading.presentation.list.components.FloatingActionButton
@@ -27,14 +24,19 @@ import com.eespinor.lightreading.reading.presentation.list.components.MonthYearP
 
 @Composable
 fun ReadingListScreen(
+    onComposing: (BarState) -> Unit,
     modifier: Modifier = Modifier,
     navController: NavController,
     viewModel: ReadingListViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state
 
+    val nameTitle = stringResource(id = R.string.readings)
+
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(ReadingListEvent.OnGetReadings)
+
+        onComposing(BarState(title = nameTitle))
     }
 
     val lazyListState = rememberLazyListState()
@@ -74,7 +76,10 @@ fun ReadingListScreen(
                             month = state.month,
                             year = state.year,
                             measure = reading.measure.toString(),
-                            roomId = reading.room.id,
+                            room = ReadingEditScreen.RoomEditData(
+                                reading.room.id,
+                                reading.room.name
+                            )
                         )
                     )
                 },

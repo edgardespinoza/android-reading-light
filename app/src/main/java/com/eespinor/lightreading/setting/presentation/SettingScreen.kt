@@ -1,4 +1,4 @@
-package com.eespinor.lightreading.reading.presentation.add
+package com.eespinor.lightreading.setting.presentation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,35 +28,34 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.eespinor.lightreading.R
 import com.eespinor.lightreading.common.BarState
-import com.eespinor.lightreading.reading.presentation.ReadingEditScreen
-import com.eespinor.lightreading.reading.presentation.add.components.RoomPicker
+import com.eespinor.lightreading.common.UiEvent
 import com.eespinor.lightreading.reading.presentation.add.components.TextEntry
-import com.eespinor.lightreading.reading.presentation.add.components.UiEvent
-import com.eespinor.lightreading.reading.presentation.list.components.MonthYearPicker
 
 @Composable
-fun ReadingAddScreen(
+fun SettingScreen(
     modifier: Modifier = Modifier,
     onComposing: (BarState) -> Unit,
     snackbarHostState: SnackbarHostState,
-    navController: NavController,
-    viewModel: ReadingAddViewModel = hiltViewModel(),
-    item: ReadingEditScreen? = null,
-) {
+    viewModel: SettingViewModel = hiltViewModel(),
 
+    ) {
     val state = viewModel.state
+    val nameTitle = stringResource(id = R.string.settings)
+    val settingSaved = stringResource(id = R.string.setting_saved)
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
-    val nameTitle = stringResource(id = R.string.room_item)
 
     LaunchedEffect(key1 = true) {
+        onComposing(BarState(title = nameTitle))
+
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is UiEvent.Success -> {
-                    navController.navigateUp()
+                    snackbarHostState.showSnackbar(
+                        message = settingSaved
+                    )
                 }
 
                 is UiEvent.ShowSnackbar -> {
@@ -64,21 +63,8 @@ fun ReadingAddScreen(
                         message = event.message.asString(context)
                     )
                 }
-
-                is UiEvent.RoomCompleted -> {
-                    item?.let {
-                        viewModel.onEvent(ReadingAddEvent.OnYearChanged(it.year))
-                        viewModel.onEvent(ReadingAddEvent.OnMonthChanged(it.month))
-                        viewModel.onEvent(ReadingAddEvent.OnMeasureChanged(it.measure))
-                        viewModel.onEvent(ReadingAddEvent.OnRoomChanged(it.room.id))
-                        onComposing(BarState(title = String.format(nameTitle, it.room.name)))
-
-                    }
-                }
-
             }
         }
-
     }
 
     Box(
@@ -97,45 +83,51 @@ fun ReadingAddScreen(
             //verticalArrangement = Arrangement.Top
             // .padding(16.dp)
         ) {
-            MonthYearPicker(modifier = Modifier
-                .padding(bottom = 8.dp)
-                .fillMaxWidth(),
-                month = state.month,
-                year = state.year,
-                isErrorMonth = state.monthError != null,
-                errorMonthMessage = state.monthError,
-                isErrorYear = state.yearError != null,
-                errorYearMessage = state.yearError,
-                onMonthChange = {
-                    viewModel.onEvent(ReadingAddEvent.OnMonthChanged(it))
-                },
-                onYearChange = {
-                    viewModel.onEvent(ReadingAddEvent.OnYearChanged(it))
-                })
-
-
-            RoomPicker(
-                modifier = Modifier
-                    //  .padding(bottom = 32.dp)
-                    .fillMaxWidth(),
-                label = stringResource(id = R.string.room),
-                rooms = state.rooms,
-                isError = state.roomError != null,
-                errorMessage = state.roomError,
-                idRoom = state.roomId,
-                onRoomChange = {
-                    viewModel.onEvent(ReadingAddEvent.OnRoomChanged(it))
-                    focusManager.moveFocus(FocusDirection.Down)
-                }
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             TextEntry(
                 label = R.string.measure,
-                textValue = state.measure,
-                isError = state.measureError != null,
-                errorMessage = state.measureError,
+                textValue = state.reading,
+                isError = state.readingError != null,
+                errorMessage = state.readingError,
+                keyboardType = KeyboardType.Decimal,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+                modifier = Modifier
+                    .padding(bottom = 32.dp)
+                    .fillMaxWidth(),
+            ) {
+                viewModel.onEvent(SettingEvent.OnReadingChanged(it))
+                viewModel.onEvent(SettingEvent.OnCalculatePrice)
+            }
+
+            TextEntry(
+                label = R.string.total_price,
+                textValue = state.total,
+                isError = state.totalError != null,
+                errorMessage = state.totalError,
+                keyboardType = KeyboardType.Decimal,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+                modifier = Modifier
+                    .padding(bottom = 32.dp)
+                    .fillMaxWidth()
+            ) {
+                viewModel.onEvent(SettingEvent.OnTotalChanged(it))
+                viewModel.onEvent(SettingEvent.OnCalculatePrice)
+
+            }
+
+            TextEntry(
+                label = R.string.price_kwh,
+                textValue = state.priceKwh,
+                isError = state.priceKwhError != null,
+                errorMessage = state.priceKwhError,
                 keyboardType = KeyboardType.Decimal,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Decimal,
@@ -146,10 +138,8 @@ fun ReadingAddScreen(
                     .padding(bottom = 32.dp)
                     .fillMaxWidth()
             ) {
-                viewModel.onEvent(ReadingAddEvent.OnMeasureChanged(it))
+                viewModel.onEvent(SettingEvent.OnPriceKwhChanged(it))
             }
-
-
         }
 
 
@@ -160,7 +150,7 @@ fun ReadingAddScreen(
                 .padding(bottom = 32.dp),
             shape = RoundedCornerShape(5.dp), // Change the value to modify corner radius
 
-            onClick = { viewModel.onEvent(ReadingAddEvent.OnSubmit) },
+            onClick = { viewModel.onEvent(SettingEvent.OnSubmit) },
             //contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
 
         ) {
@@ -169,4 +159,3 @@ fun ReadingAddScreen(
         }
     }
 }
-

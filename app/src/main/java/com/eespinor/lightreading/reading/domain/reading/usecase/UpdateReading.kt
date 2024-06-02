@@ -8,6 +8,6 @@ class UpdateReading @Inject constructor(
     private val repository: ReadingRepository
 ) {
 
-    suspend operator fun invoke(reading: Reading) = repository.updateReading(reading)
+     operator fun invoke(reading: Reading) = repository.updateReading(reading)
 
 }

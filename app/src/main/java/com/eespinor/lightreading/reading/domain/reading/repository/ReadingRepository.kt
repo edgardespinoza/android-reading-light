@@ -6,14 +6,14 @@ import kotlinx.coroutines.flow.Flow
 
 interface ReadingRepository {
 
-    suspend fun getReadings(month: Int, year: Int): Flow<Resource<List<Reading>>>
+     fun getReadings(month: Int, year: Int): Flow<Resource<List<Reading>>>
 
-    suspend fun insertReading(
+     fun insertReading(
         reading: Reading
     ): Flow<Resource<Void>>
 
-    suspend fun updateReading(reading: Reading): Flow<Resource<Void>>
+     fun updateReading(reading: Reading): Flow<Resource<Void>>
 
-    suspend fun getReading(id: String): Flow<Resource<Reading>>
+     fun getReading(id: String): Flow<Resource<Reading>>
 
 }

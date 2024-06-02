@@ -53,7 +53,7 @@ class ReadingListViewModel @Inject constructor(
             getReadingUseCase(month, year).collect { result ->
                  when (result) {
                     is Resource.Success -> {
-                       state = state.copy(readings = result.data ?: emptyList())
+                       state = state.copy(readings = result.data ?: emptyList(), error = "")
                     }
 
                     is Resource.Error -> {

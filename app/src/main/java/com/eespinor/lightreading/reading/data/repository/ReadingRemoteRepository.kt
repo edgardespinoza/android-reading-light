@@ -17,7 +17,7 @@ class ReadingRemoteRepository @Inject constructor(
     private val readingApi: ReadingApi
 ) : ReadingRepository {
 
-    override suspend fun getReadings(month: Int, year: Int): Flow<Resource<List<Reading>>> {
+    override  fun getReadings(month: Int, year: Int): Flow<Resource<List<Reading>>> {
         return flow {
             emit(Resource.Loading(true))
             try {
@@ -46,7 +46,7 @@ class ReadingRemoteRepository @Inject constructor(
         }
     }
 
-    override suspend fun insertReading(reading: Reading): Flow<Resource<Void>> {
+    override  fun insertReading(reading: Reading): Flow<Resource<Void>> {
 
         return flow {
             try {
@@ -68,7 +68,7 @@ class ReadingRemoteRepository @Inject constructor(
     }
 
 
-    override suspend fun updateReading(reading: Reading): Flow<Resource<Void>> {
+    override  fun updateReading(reading: Reading): Flow<Resource<Void>> {
         return flow {
             try {
                 emit(Resource.Loading(true))
@@ -87,7 +87,7 @@ class ReadingRemoteRepository @Inject constructor(
         }
     }
 
-    override suspend fun getReading(id: String): Flow<Resource<Reading>> {
+    override  fun getReading(id: String): Flow<Resource<Reading>> {
         return flow {
             emit(Resource.Loading(true))
             try {

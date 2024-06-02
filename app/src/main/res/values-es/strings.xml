@@ -13,5 +13,16 @@
     <string name="before">Anterior</string>
     <string name="today">Hoy</string>
     <string name="difference">Diferencia</string>
+    <string name="readings">Lecturas</string>
+    <string name="room_item">Cuarto %s</string>
+    <string name="home">Inicio</string>
+    <string name="settings">Configuración</string>
+    <string name="total_must_be_number">Precio Total debe ser numérico</string>
+    <string name="total_empty">Precio Total está vacío</string>
+    <string name="price_kwh_empty">Precio kwh está vacío</string>
+    <string name="price_kwh_must_be_number">Precio kwh debe ser numérico</string>
+    <string name="total_price">Precio Total</string>
+    <string name="price_kwh">Precio kwh</string>
+    <string name="setting_saved">Configuración registrada</string>
 
 </resources>

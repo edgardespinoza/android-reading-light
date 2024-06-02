@@ -15,7 +15,7 @@ import javax.inject.Inject
 class RoomRemoteRepository @Inject constructor(
     private val roomApi: RoomApi
 ) : RoomRepository {
-    override suspend fun getRooms(): Flow<Resource<List<Room>>> {
+    override fun getRooms(): Flow<Resource<List<Room>>> {
         return flow {
             emit(Resource.Loading(true))
 

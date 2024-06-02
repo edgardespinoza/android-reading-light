@@ -11,7 +11,7 @@ class AddReading @Inject constructor(
     private val repository: ReadingRepository
 ) {
 
-    suspend operator fun invoke(
+     operator fun invoke(
         measure: Double,
         year: Int,
         month: Int,

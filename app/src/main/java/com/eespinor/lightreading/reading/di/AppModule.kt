@@ -1,9 +1,6 @@
 package com.eespinor.lightreading.reading.di
 
-import android.app.Application
-import androidx.room.Room
 import com.eespinor.lightreading.common.Constants
-import com.eespinor.lightreading.reading.data.local.ReadingDatabase
 import com.eespinor.lightreading.reading.data.remote.reading.ReadingApi
 import com.eespinor.lightreading.reading.data.remote.room.RoomApi
 import com.squareup.moshi.Moshi
@@ -16,7 +13,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.create
 import javax.inject.Singleton
 
 @Module
@@ -55,14 +51,6 @@ object AppModule {
     @Singleton
     fun provideRoomApi(retrofitBuilder: Retrofit.Builder, okHttpClient: OkHttpClient): RoomApi {
         return retrofitBuilder.client(okHttpClient).build().create(RoomApi::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideStockDatabase(app: Application): ReadingDatabase {
-        return Room.databaseBuilder(
-            app, ReadingDatabase::class.java, "lightReading.db"
-        ).build()
     }
 
 }

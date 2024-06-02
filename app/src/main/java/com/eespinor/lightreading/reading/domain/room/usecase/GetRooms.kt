@@ -9,5 +9,5 @@ import javax.inject.Inject
 class GetRooms @Inject constructor(
     private val roomsRepository: RoomRepository
 ) {
-    suspend operator fun invoke() : Flow<Resource<List<Room>>> = roomsRepository.getRooms()
+    operator fun invoke() : Flow<Resource<List<Room>>> = roomsRepository.getRooms()
 }

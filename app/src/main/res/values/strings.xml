@@ -13,4 +13,16 @@
     <string name="before">Before</string>
     <string name="today">Today</string>
     <string name="difference">Difference</string>
+    <string name="readings">Readings</string>
+    <string name="room_item">Room %s</string>
+    <string name="home">Readings</string>
+    <string name="settings">Settings</string>
+    <string name="total_must_be_number">Total Price must be number</string>
+    <string name="total_empty">Total Price is empty</string>
+    <string name="price_kwh_empty">Price kwh is empty</string>
+    <string name="price_kwh_must_be_number">Price kwh must be number</string>
+    <string name="total_price">Total Price</string>
+    <string name="price_kwh">Price kwh</string>
+    <string name="setting_saved">Settings saved</string>
+
 </resources>

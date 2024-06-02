@@ -6,12 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.toRoute
 import com.eespinor.lightreading.R
 import com.eespinor.lightreading.common.Constants
 import com.eespinor.lightreading.common.Resource
-import com.eespinor.lightreading.common.UiEvent
 import com.eespinor.lightreading.common.UiText
 import com.eespinor.lightreading.common.ValidationResult
 import com.eespinor.lightreading.reading.domain.reading.model.ReadingType
@@ -22,13 +19,10 @@ import com.eespinor.lightreading.reading.domain.reading.usecase.ValidateMonth
 import com.eespinor.lightreading.reading.domain.reading.usecase.ValidateRoom
 import com.eespinor.lightreading.reading.domain.reading.usecase.ValidateYear
 import com.eespinor.lightreading.reading.domain.room.usecase.GetRooms
-import com.eespinor.lightreading.reading.presentation.ReadingEditScreen
+import com.eespinor.lightreading.reading.presentation.add.components.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -121,8 +115,8 @@ class ReadingAddViewModel @Inject constructor(
 
         state = state.copy(measureError = null, roomError = null, yearError = null, monthError = null)
 
-
         saveReadingJob?.cancel()
+
         saveReadingJob = viewModelScope.launch {
             addReadingUseCase(
                 state.measure.toDouble(), state.year, state.month, state.roomId
@@ -226,9 +220,7 @@ private fun getMessage(validationResult: ValidationResult<ReadingType>): Int? {
             R.string.year_invalid
         }
 
-        null -> {
-            null
-        }
+       else -> null
     }
 
 }

@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetReadings @Inject constructor(
     private val readingRepository: ReadingRepository
 ){
-    suspend operator fun invoke(month: Int, year: Int) = readingRepository.getReadings(month, year)
+     operator fun invoke(month: Int, year: Int) = readingRepository.getReadings(month, year)
 }
