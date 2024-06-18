@@ -2,6 +2,9 @@ package com.eespinor.lightreading.reading.domain.reading.model
 
 import androidx.compose.runtime.Immutable
 import com.eespinor.lightreading.reading.domain.room.model.Room
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.util.Locale
 
 @Immutable
 data class Reading(
@@ -11,4 +14,20 @@ data class Reading(
     val month: Int,
     val room: Room,
     val measurePrevious: Double? = 0.0,
+    val differenceMeasure: Double? = 0.0,
+    val amountPaid: Int? = 0,
 )
+
+fun calculateDifferenceMeasure(measure:Double, measurePrevious: Double?): Double {
+    return measure - (measurePrevious ?: 0.0)
+}
+
+fun calculateAmountPaid(priceKwh: Double?, differenceMeasure:Double): Int {
+    priceKwh?.let {
+        val amountPaid = differenceMeasure * it
+
+        return  amountPaid.toInt()
+
+    }
+    return 0
+}

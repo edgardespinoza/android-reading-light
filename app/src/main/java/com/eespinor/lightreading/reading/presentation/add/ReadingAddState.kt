@@ -19,4 +19,9 @@ data class ReadingAddState(
 
     val isErrorGetRooms: Boolean = false,
     val isErrorGetReading: Boolean = false,
+
+    val measurePrevious: String? = "",
+    val differenceMeasure: String? = "",
+    val amountPaid: String? = "",
+
 )

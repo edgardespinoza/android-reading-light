@@ -11,28 +11,33 @@ import kotlinx.serialization.json.Json
 
 @Serializable
 sealed class Screen(val route: String) {
-    object ReadingListScreen : Screen("reading_list_screen")
-    object ReadingAddScreen : Screen("reading_add_screen")
+
+    data object ReadingAddScreen : Screen("reading_add_screen")
 
     @Serializable
     data object SettingsScreen
-}
 
-
-@Serializable
-data class ReadingEditScreen(
-    val id: String,
-    val measure: String,
-    val year: Int,
-    val month: Int,
-    val room: RoomEditData,
-) {
     @Serializable
-    @Parcelize
-    data class RoomEditData(
+    object ReadingListScreen
+
+    @Serializable
+    data class ReadingEditScreen(
         val id: String,
-        val name: String,
-    ) : Parcelable
+        val measure: String,
+        val year: Int,
+        val month: Int,
+        val measurePrevious: String? = "",
+        val differenceMeasure: String? = "",
+        val amountPaid: String? = "",
+        val room: RoomEditData,
+    ) {
+        @Serializable
+        @Parcelize
+        data class RoomEditData(
+            val id: String,
+            val name: String,
+        ) : Parcelable
+    }
 }
 
 inline fun <reified T : Parcelable> createCustomNavType(): NavType<T> {
@@ -60,5 +65,5 @@ inline fun <reified T : Parcelable> createCustomNavType(): NavType<T> {
     }
 }
 
-val RoomEditDataNavType = createCustomNavType<ReadingEditScreen.RoomEditData>()
+val RoomEditDataNavType = createCustomNavType<Screen.ReadingEditScreen.RoomEditData>()
 

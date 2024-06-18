@@ -2,10 +2,8 @@ package com.eespinor.lightreading.setting.presentation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -29,16 +27,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.eespinor.lightreading.R
-import com.eespinor.lightreading.common.BarState
+import com.eespinor.lightreading.common.ScaffoldViewState
 import com.eespinor.lightreading.common.UiEvent
 import com.eespinor.lightreading.reading.presentation.add.components.TextEntry
 
 @Composable
 fun SettingScreen(
     modifier: Modifier = Modifier,
-    onComposing: (BarState) -> Unit,
     snackbarHostState: SnackbarHostState,
     viewModel: SettingViewModel = hiltViewModel(),
+    onScaffoldViewState: (ScaffoldViewState) -> Unit,
 
     ) {
     val state = viewModel.state
@@ -47,8 +45,17 @@ fun SettingScreen(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
+    LaunchedEffect(Unit) {
+
+        onScaffoldViewState(
+            ScaffoldViewState(
+                topAppBarTitle = nameTitle,
+                isBottomBarVisible = true
+            ),
+        )
+    }
+
     LaunchedEffect(key1 = true) {
-        onComposing(BarState(title = nameTitle))
 
         viewModel.uiEvent.collect { event ->
             when (event) {

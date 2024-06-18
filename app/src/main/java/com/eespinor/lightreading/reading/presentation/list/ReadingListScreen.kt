@@ -6,41 +6,76 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.rememberGraphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.eespinor.lightreading.R
-import com.eespinor.lightreading.common.BarState
-import com.eespinor.lightreading.reading.presentation.ReadingEditScreen
+import com.eespinor.lightreading.common.ScaffoldViewState
 import com.eespinor.lightreading.reading.presentation.Screen
-import com.eespinor.lightreading.reading.presentation.list.components.FloatingActionButton
 import com.eespinor.lightreading.reading.presentation.list.components.ItemsReading
 import com.eespinor.lightreading.reading.presentation.list.components.MonthYearPicker
 
 @Composable
 fun ReadingListScreen(
-    onComposing: (BarState) -> Unit,
     modifier: Modifier = Modifier,
     navController: NavController,
     viewModel: ReadingListViewModel = hiltViewModel(),
+    onScaffoldViewState: (ScaffoldViewState) -> Unit,
+    onFabVisible: (Boolean) -> Unit,
 ) {
     val state = viewModel.state
+    val context = LocalContext.current
+    val graphicsLayer = rememberGraphicsLayer()
 
     val nameTitle = stringResource(id = R.string.readings)
 
-    LaunchedEffect(key1 = true) {
-        viewModel.onEvent(ReadingListEvent.OnGetReadings)
+    LaunchedEffect(Unit) {
+        onScaffoldViewState(
+            ScaffoldViewState(
+                topAppBarTitle = nameTitle,
+                fabText = R.string.add,
+                fabIcon = Icons.Filled.Add,
+                onFabClick = {
+                    navController.navigate(Screen.ReadingAddScreen.route + "/${state.month}/${state.year}")
+                },
+                isBottomBarVisible = true,
+                onProcessData = {
+                    viewModel.onEvent(ReadingListEvent.OnShareData(context, graphicsLayer))
 
-        onComposing(BarState(title = nameTitle))
+                }
+            )
+        )
     }
 
     val lazyListState = rememberLazyListState()
 
+
+    val expandedFab by remember {
+        derivedStateOf {
+            lazyListState.firstVisibleItemIndex == 0
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.onEvent(ReadingListEvent.OnGetReadings)
+
+    }
+
+    LaunchedEffect(key1 = expandedFab) {
+        onFabVisible((expandedFab))
+    }
 
 
     Box(
@@ -71,12 +106,15 @@ fun ReadingListScreen(
                 isRefreshing = state.isRefreshing,
                 onItemClick = { reading ->
                     navController.navigate(
-                        ReadingEditScreen(
+                        Screen.ReadingEditScreen(
                             id = reading.id,
                             month = state.month,
                             year = state.year,
+                            measurePrevious = reading.measurePrevious.toString(),
+                            differenceMeasure = reading.differenceMeasure.toString(),
+                            amountPaid = reading.amountPaid.toString(),
                             measure = reading.measure.toString(),
-                            room = ReadingEditScreen.RoomEditData(
+                            room = Screen.ReadingEditScreen.RoomEditData(
                                 reading.room.id,
                                 reading.room.name
                             )
@@ -86,18 +124,11 @@ fun ReadingListScreen(
                 onRefresh = {
                     viewModel.onEvent(ReadingListEvent.OnRefreshing)
                 },
-                lazyListState = lazyListState
+                lazyListState = lazyListState,
+                graphicsLayer = graphicsLayer,
             )
         }
 
-        FloatingActionButton(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp),
-            onClick = {
-                navController.navigate(Screen.ReadingAddScreen.route + "/${state.month}/${state.year}")
-            },
-            lazyListState = lazyListState
-        )
+
     }
 }

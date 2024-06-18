@@ -29,7 +29,7 @@ import com.eespinor.lightreading.reading.domain.reading.model.Reading
 @Composable
 fun ItemReading(
     reading: Reading,
-    onItemClick: (Reading) -> Unit,
+    onItemClick: (Reading) -> Unit={},
 ) {
     Card(
         modifier = Modifier
@@ -73,11 +73,20 @@ fun ItemReading(
                 Text(
                     text = "${stringResource(id = R.string.before)}: ${reading.measurePrevious}",
                     fontStyle = FontStyle.Italic,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleSmall,
+                    textAlign = TextAlign.Start,
                 )
                 Text(
-                    text = "${stringResource(id = R.string.difference)}: ${reading.measure - (reading?.measurePrevious ?: 0.0)} ",
+                    text = "${stringResource(id = R.string.difference)}: ${reading.differenceMeasure} ",
                     fontStyle = FontStyle.Italic,
+                    style = MaterialTheme.typography.titleSmall,
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    text = String.format(stringResource(id = R.string.price_paid) ,reading.amountPaid),
+                    fontStyle = FontStyle.Normal,
+                    color = Color.Blue,
+                    fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall,
                     textAlign = TextAlign.End,
                 )
