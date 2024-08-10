@@ -19,7 +19,9 @@ data class Reading(
 )
 
 fun calculateDifferenceMeasure(measure:Double, measurePrevious: Double?): Double {
-    return measure - (measurePrevious ?: 0.0)
+    val result = measure - (measurePrevious ?: 0.0)
+
+    return BigDecimal(result).setScale(2, RoundingMode.HALF_UP).toDouble()
 }
 
 fun calculateAmountPaid(priceKwh: Double?, differenceMeasure:Double): Int {

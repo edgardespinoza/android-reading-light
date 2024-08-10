@@ -90,8 +90,6 @@ fun BottomNavigation(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    val context = LocalContext.current
-    val view = LocalView.current
 
     var selectedItemIndex by rememberSaveable {
         mutableStateOf(0)

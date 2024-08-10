@@ -14,6 +14,8 @@
     <string name="today">Today</string>
     <string name="difference">Difference</string>
     <string name="price_paid">Paid: $ %s</string>
+    <string name="amount">$ %s</string>
+    <string name="price_paid_shared">Paid</string>
     <string name="readings">Readings</string>
     <string name="room_item">Room %s</string>
     <string name="home">Readings</string>

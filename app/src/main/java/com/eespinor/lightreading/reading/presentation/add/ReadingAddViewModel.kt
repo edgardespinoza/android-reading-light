@@ -14,19 +14,16 @@ import com.eespinor.lightreading.common.Constants
 import com.eespinor.lightreading.common.Resource
 import com.eespinor.lightreading.common.UiText
 import com.eespinor.lightreading.common.ValidationResult
-import com.eespinor.lightreading.reading.domain.reading.model.Reading
 import com.eespinor.lightreading.reading.domain.reading.model.ReadingType
 import com.eespinor.lightreading.reading.domain.reading.model.calculateAmountPaid
 import com.eespinor.lightreading.reading.domain.reading.model.calculateDifferenceMeasure
 import com.eespinor.lightreading.reading.domain.reading.usecase.AddReading
-import com.eespinor.lightreading.reading.domain.reading.usecase.GetReading
 import com.eespinor.lightreading.reading.domain.reading.usecase.ValidateMeasure
 import com.eespinor.lightreading.reading.domain.reading.usecase.ValidateMonth
 import com.eespinor.lightreading.reading.domain.reading.usecase.ValidateRoom
 import com.eespinor.lightreading.reading.domain.reading.usecase.ValidateYear
 import com.eespinor.lightreading.reading.domain.room.usecase.GetRooms
 import com.eespinor.lightreading.reading.presentation.add.components.UiEvent
-import com.eespinor.lightreading.reading.presentation.list.ReadingListEvent
 import com.eespinor.lightreading.setting.domain.model.Setting
 import com.eespinor.lightreading.setting.domain.usecase.GetSetting
 import com.eespinor.lightreading.util.saveBitmapToFile
@@ -43,7 +40,6 @@ class ReadingAddViewModel @Inject constructor(
     private val getRoomUseCase: GetRooms,
     private val addReadingUseCase: AddReading,
     savedStateHandle: SavedStateHandle,
-    private val getReadingUseCase: GetReading,
     private val validateMeasureUseCase: ValidateMeasure,
     private val validateRoomUseCase: ValidateRoom,
     private val validateYearUseCase: ValidateYear,

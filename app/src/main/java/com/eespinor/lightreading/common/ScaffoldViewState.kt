@@ -15,6 +15,7 @@ data class ScaffoldViewState(
     val fabIcon: ImageVector? = null,
     val onFabClick: (() -> Unit)? = null,
     val isBottomBarVisible: Boolean = true,
+    val isTopBarVisible: Boolean = true,
     val onProcessData: (() -> Unit)? = null
 ) {
 

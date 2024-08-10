@@ -3,6 +3,7 @@ package com.eespinor.lightreading.reading.di
 import com.eespinor.lightreading.common.Constants
 import com.eespinor.lightreading.reading.data.remote.reading.ReadingApi
 import com.eespinor.lightreading.reading.data.remote.room.RoomApi
+import com.eespinor.lightreading.setting.data.remote.SettingApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -53,4 +54,9 @@ object AppModule {
         return retrofitBuilder.client(okHttpClient).build().create(RoomApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideSettingApi(retrofitBuilder: Retrofit.Builder, okHttpClient: OkHttpClient): SettingApi {
+        return retrofitBuilder.client(okHttpClient).build().create(SettingApi::class.java)
+    }
 }

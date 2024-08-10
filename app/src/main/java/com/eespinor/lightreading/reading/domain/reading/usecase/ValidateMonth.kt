@@ -9,7 +9,7 @@ class ValidateMonth @Inject constructor() {
 
     operator fun invoke(month: Int): ValidationResult<ReadingType> {
 
-        if (month < LocalDate.now().monthValue - 1 || month > LocalDate.now().monthValue) {
+        if ( month > LocalDate.now().monthValue) {
             return ValidationResult(
                 successful = false,
                 type = ReadingType.MonthInvalid

@@ -51,6 +51,7 @@ import com.eespinor.lightreading.reading.presentation.add.components.TextEntry
 import com.eespinor.lightreading.reading.presentation.add.components.UiEvent
 import com.eespinor.lightreading.reading.presentation.list.ReadingListEvent
 import com.eespinor.lightreading.reading.presentation.list.components.MonthYearPicker
+import java.time.Month
 
 @Composable
 fun ReadingAddScreen(
@@ -68,14 +69,23 @@ fun ReadingAddScreen(
     val nameTitle = stringResource(id = R.string.room_item)
     val graphicsLayer = rememberGraphicsLayer()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(key1= state) {
         onScaffoldViewState(
             ScaffoldViewState(
                 topAppBarTitle = String.format(nameTitle, item?.room?.name ?: ""),
                 isBottomBarVisible = true,
                 onProcessData = {
-                    viewModel.onEvent(ReadingAddEvent.OnShareData(context, graphicsLayer))
-
+                    navController.navigate(
+                        Screen.SharedScreen(
+                            month = Month.of(state.month).name,
+                            year = state.year,
+                            measurePrevious = state.measurePrevious,
+                            differenceMeasure = state.differenceMeasure,
+                            amountPaid = state.amountPaid,
+                            measure = state.measure,
+                            roomName = state.rooms.find { it.id == state.roomId }?.name ?: "",
+                        )
+                    )
                 }
             )
         )
@@ -134,18 +144,7 @@ fun ReadingAddScreen(
                     // draw the graphics layer on the visible canvas
                     drawLayer(graphicsLayer)
 
-                }
-                .background(
-                    Brush.linearGradient(
-                        listOf(
-                            Color.White,
-                            Color.White,
-                            //Color(0xFFF8E8E3)
-                        )
-                    )
-                )
-            , // Padding to prevent content from overlapping with the button
-
+                },
             horizontalAlignment = Alignment.CenterHorizontally,
             //verticalArrangement = Arrangement.Top
             // .padding(16.dp)
@@ -234,7 +233,6 @@ fun ReadingAddScreen(
                         state.amountPaid
                     ),
                     fontStyle = FontStyle.Normal,
-                    color = Color.Blue,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.Center,

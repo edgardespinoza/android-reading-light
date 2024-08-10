@@ -14,6 +14,8 @@
     <string name="today">Hoy</string>
     <string name="difference">Diferencia</string>
     <string name="price_paid">Pagar: S/ %s</string>
+    <string name="amount">S/ %s</string>
+    <string name="price_paid_shared">Pagar</string>
     <string name="readings">Lecturas</string>
     <string name="room_item">Cuarto %s</string>
     <string name="home">Inicio</string>

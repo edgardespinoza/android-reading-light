@@ -38,6 +38,17 @@ sealed class Screen(val route: String) {
             val name: String,
         ) : Parcelable
     }
+
+    @Serializable
+    data class SharedScreen(
+        val measure: String="",
+        val year: Int,
+        val month: String="",
+        val measurePrevious: String? = "",
+        val differenceMeasure: String? = "",
+        val amountPaid: String? = "",
+        val roomName: String? = "",
+    )
 }
 
 inline fun <reified T : Parcelable> createCustomNavType(): NavType<T> {
@@ -48,10 +59,10 @@ inline fun <reified T : Parcelable> createCustomNavType(): NavType<T> {
 
         override fun get(bundle: Bundle, key: String): T? {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                bundle.getParcelable(key, T::class.java) as? T
+                bundle.getParcelable(key, T::class.java)
             } else {
                 @Suppress("DEPRECATION")
-                bundle.getParcelable<T>(key)
+                bundle.getParcelable(key)
             }
         }
 

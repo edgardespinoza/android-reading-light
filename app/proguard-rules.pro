@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.eespinor.lightreading.reading.data.remote.reading.dto.* {*;}
+-keep class com.eespinor.lightreading.setting.data.remote.dto.* {*;}
+-keep class com.eespinor.lightreading.reading.data.remote.room.dto.* {*;}

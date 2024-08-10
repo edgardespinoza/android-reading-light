@@ -8,5 +8,6 @@ interface SettingRepository {
 
     suspend fun upsertSetting(setting: Setting)
 
+    suspend fun getSettingRemote(): Setting?
 
 }

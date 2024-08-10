@@ -1,9 +1,13 @@
 package com.eespinor.lightreading.reading.presentation
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.view.View
+import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,6 +28,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.animation.doOnEnd
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,6 +40,7 @@ import com.eespinor.lightreading.common.BottomNavigation
 import com.eespinor.lightreading.common.ScaffoldViewState
 import com.eespinor.lightreading.reading.presentation.add.ReadingAddScreen
 import com.eespinor.lightreading.reading.presentation.list.ReadingListScreen
+import com.eespinor.lightreading.reading.presentation.share.SharedScreen
 import com.eespinor.lightreading.reading.presentation.ui.theme.LightReadingTheme
 import com.eespinor.lightreading.setting.presentation.SettingScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,9 +48,43 @@ import kotlin.reflect.typeOf
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val viewModel by viewModels<MainViewModel>()
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                !viewModel.isReady
+            }
+            setOnExitAnimationListener { screen ->
+                val zoomX = ObjectAnimator.ofFloat(
+                    screen.iconView,
+                    View.SCALE_X,
+                    0.4f,
+                    0.0f
+                )
+                zoomX.interpolator = OvershootInterpolator()
+                zoomX.duration = 500L
+                zoomX.doOnEnd { screen.remove() }
+
+                val zoomY = ObjectAnimator.ofFloat(
+                    screen.iconView,
+                    View.SCALE_Y,
+                    0.4f,
+                    0.0f
+                )
+                zoomY.interpolator = OvershootInterpolator()
+                zoomY.duration = 500L
+                zoomY.doOnEnd { screen.remove() }
+
+                zoomX.start()
+                zoomY.start()
+            }
+        }
+
         enableEdgeToEdge()
         setContent {
             LightReadingTheme {
@@ -63,21 +104,26 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     snackbarHost = { SnackbarHost(snackbarHostState) },
                     topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            title = {
-                                scaffoldViewState.topAppBarTitle?.let {
-                                    Text(text = it)
+                        if (scaffoldViewState.isTopBarVisible) {
+                            TopAppBar(
+                                colors = TopAppBarDefaults.topAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    titleContentColor = MaterialTheme.colorScheme.primary,
+                                ),
+                                title = {
+                                    scaffoldViewState.topAppBarTitle?.let {
+                                        Text(text = it)
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     },
                     bottomBar = {
-                        if(scaffoldViewState.isBottomBarVisible) {
-                            BottomNavigation(navController = navController, scaffoldViewState= scaffoldViewState)
+                        if (scaffoldViewState.isBottomBarVisible) {
+                            BottomNavigation(
+                                navController = navController,
+                                scaffoldViewState = scaffoldViewState
+                            )
                         }
                     },
                     floatingActionButton = {
@@ -105,7 +151,7 @@ class MainActivity : ComponentActivity() {
                         startDestination = Screen.ReadingListScreen,
                         modifier = Modifier.padding(innerPadding)
                     ) {
-                        composable<Screen.ReadingListScreen>{
+                        composable<Screen.ReadingListScreen> {
 
                             ReadingListScreen(
                                 navController = navController,
@@ -151,6 +197,16 @@ class MainActivity : ComponentActivity() {
                         composable<Screen.SettingsScreen> {
                             SettingScreen(
                                 snackbarHostState = snackbarHostState,
+                                onScaffoldViewState = {
+                                    scaffoldViewState = it
+                                }
+                            )
+                        }
+
+                        composable<Screen.SharedScreen> { backStackEntry ->
+                            val item = backStackEntry.toRoute<Screen.SharedScreen>()
+                            SharedScreen(
+                                item = item,
                                 onScaffoldViewState = {
                                     scaffoldViewState = it
                                 }

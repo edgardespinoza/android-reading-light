@@ -1,5 +1,6 @@
 package com.eespinor.lightreading.reading.data.repository
 
+import android.util.Log
 import com.eespinor.lightreading.common.Resource
 import com.eespinor.lightreading.reading.data.remote.reading.ReadingApi
 import com.eespinor.lightreading.reading.data.remote.reading.dto.ReadingDtoRegister
@@ -14,12 +15,13 @@ import java.io.IOException
 import javax.inject.Inject
 
 class ReadingRemoteRepository @Inject constructor(
-    private val readingApi: ReadingApi
+    private val readingApi: ReadingApi,
 ) : ReadingRepository {
 
-    override  fun getReadings(month: Int, year: Int): Flow<Resource<List<Reading>>> {
+    override fun getReadings(month: Int, year: Int): Flow<Resource<List<Reading>>> {
         return flow {
             emit(Resource.Loading(true))
+
             try {
                 val remoteReadings = readingApi.getListReading(month, year)
                 remoteReadings.let { listings ->
@@ -28,25 +30,25 @@ class ReadingRemoteRepository @Inject constructor(
                     emit(Resource.Loading(false))
                 }
             } catch (e: HttpException) {
-                e.printStackTrace()
+                Log.e("ReadingRemoteRepository", "getReadings.HttpException: ", e)
                 emit(Resource.Error("Error " + e.message))
                 emit(Resource.Loading(false))
                 return@flow
             } catch (e: IOException) {
-                e.printStackTrace()
-                emit(Resource.Error("Error " + e.message))
+                Log.e("ReadingRemoteRepository", "getReadings.IOException: ", e)
+                emit(Resource.Error("Error IOException: " + e.message))
                 emit(Resource.Loading(false))
                 return@flow
             } catch (e: Exception) {
-                e.printStackTrace()
-                emit(Resource.Error("Error " + e.message))
+                Log.e("ReadingRemoteRepository", "getReadings.Exception: ", e)
+                emit(Resource.Error("Error Exception: " + e.message))
                 emit(Resource.Loading(false))
                 return@flow
             }
         }
     }
 
-    override  fun insertReading(reading: Reading): Flow<Resource<Void>> {
+    override fun insertReading(reading: Reading): Flow<Resource<Void>> {
 
         return flow {
             try {
@@ -68,7 +70,7 @@ class ReadingRemoteRepository @Inject constructor(
     }
 
 
-    override  fun updateReading(reading: Reading): Flow<Resource<Void>> {
+    override fun updateReading(reading: Reading): Flow<Resource<Void>> {
         return flow {
             try {
                 emit(Resource.Loading(true))
@@ -87,7 +89,7 @@ class ReadingRemoteRepository @Inject constructor(
         }
     }
 
-    override  fun getReading(id: String): Flow<Resource<Reading>> {
+    override fun getReading(id: String): Flow<Resource<Reading>> {
         return flow {
             emit(Resource.Loading(true))
             try {

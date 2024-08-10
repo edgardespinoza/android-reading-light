@@ -59,7 +59,6 @@ fun ItemReading(
                 )
                 Text(
                     text = "${reading.measure}",
-                    color = Color.DarkGray,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.End,
                     style = MaterialTheme.typography.bodyLarge,
@@ -85,7 +84,6 @@ fun ItemReading(
                 Text(
                     text = String.format(stringResource(id = R.string.price_paid) ,reading.amountPaid),
                     fontStyle = FontStyle.Normal,
-                    color = Color.Blue,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall,
                     textAlign = TextAlign.End,
